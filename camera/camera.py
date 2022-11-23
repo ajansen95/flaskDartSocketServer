@@ -3,6 +3,7 @@ import threading
 import time
 
 import cv2
+from camera import manipulation
 
 
 class Camera:
@@ -27,7 +28,20 @@ class Camera:
 
     def get_frame(self):
         self.last_access = time.time()
-        return self.current_frame
+        ret, encoded_frame = cv2.imencode(".jpg", self.current_frame)
+        if ret:
+            return encoded_frame
+        else:
+            print("Failed to encode frame")
+
+    def get_manipulated_frame(self):
+        self.last_access = time.time()
+        manipulated_frame = manipulation.manipulate(self.current_frame)
+        ret, encoded_frame = cv2.imencode(".jpg", manipulated_frame)
+        if ret:
+            return encoded_frame
+        else:
+            print("Failed to encode frame")
 
     def stop(self):
         self.is_running = False
@@ -41,11 +55,7 @@ class Camera:
             time.sleep(0.1)
             ret, frame = self.camera.read()
             if ret:
-                ret, encoded = cv2.imencode(".jpg", frame)
-                if ret:
-                    self.current_frame = encoded
-                else:
-                    print("Failed to encode frame")
+                self.current_frame = frame
             else:
                 print("Failed to capture frame")
         print("Reading thread stopped")

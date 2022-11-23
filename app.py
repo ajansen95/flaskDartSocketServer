@@ -16,10 +16,10 @@ camera = Camera()
 camera.start()
 
 
-@app.route("/")
-def index():
+@app.route("/video")
+def video():
     """Video streaming home page."""
-    return render_template("index.html")
+    return render_template("video.html")
 
 
 @socketio.on("request-frame", namespace="/camera-feed")
@@ -27,6 +27,21 @@ def camera_frame_requested(message):
     frame = camera.get_frame()
     if frame is not None:
         emit("new-frame", {
+            "base64": base64.b64encode(frame).decode("ascii")
+        })
+
+
+@app.route("/manipulated_video")
+def manipulated_video():
+    """Video streaming home page."""
+    return render_template("manipulated_video.html")
+
+
+@socketio.on("request-manipulated-frame", namespace="/manipulated-camera-feed")
+def camera_frame_requested(message):
+    frame = camera.get_manipulated_frame()
+    if frame is not None:
+        emit("manipulated-new-frame", {
             "base64": base64.b64encode(frame).decode("ascii")
         })
 
