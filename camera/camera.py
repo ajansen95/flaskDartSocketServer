@@ -15,8 +15,8 @@ class Camera:
         self.camera = cv2.VideoCapture(0)
         if not self.camera.isOpened():
             raise Exception("Could not open video device")
-        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 906)
+        self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 906)
 
     def __del__(self):
         self.camera.release()
