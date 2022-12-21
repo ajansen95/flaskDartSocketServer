@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import base64
+import logging
 
+import cv2
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from engineio.payload import Payload
@@ -9,6 +11,8 @@ from engineio.payload import Payload
 from camera.camera import Camera
 
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 Payload.max_decode_packets = 500
 socketio = SocketIO(app)
 
