@@ -9,6 +9,7 @@ from flask_socketio import SocketIO, emit
 from engineio.payload import Payload
 
 from camera.camera import Camera
+from camera.manipulation import get_current_point
 
 app = Flask(__name__)
 log = logging.getLogger('werkzeug')
@@ -45,6 +46,15 @@ def manipulated_video():
 def camera_frame_requested(message):
     frame = camera.get_manipulated_frame()
     if frame is not None:
+        emit("manipulated-new-frame", {
+            "base64": base64.b64encode(frame).decode("ascii")
+        })
+
+
+@socketio.on("request-current-point", namespace="/current-point-feed")
+def camera_frame_requested(message):
+    point = get_current_point()
+    if point is not None:
         emit("manipulated-new-frame", {
             "base64": base64.b64encode(frame).decode("ascii")
         })
