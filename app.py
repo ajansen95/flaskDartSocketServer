@@ -14,7 +14,7 @@ from camera.manipulation import get_current_point
 
 app = Flask(__name__)
 log = logging.getLogger('werkzeug')
-# log.setLevel(logging.ERROR)
+log.setLevel(logging.ERROR)
 Payload.max_decode_packets = 500
 socketio = SocketIO(app)
 
