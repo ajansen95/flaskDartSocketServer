@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import logging
+import time
 
 import cv2
 from flask import Flask, render_template
@@ -13,7 +14,7 @@ from camera.manipulation import get_current_point
 
 app = Flask(__name__)
 log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+# log.setLevel(logging.ERROR)
 Payload.max_decode_packets = 500
 socketio = SocketIO(app)
 
@@ -51,13 +52,25 @@ def camera_frame_requested(message):
         })
 
 
+@app.route("/points_socket")
+def points_feed():
+    """Points streaming home page."""
+    return render_template("points_socket.html")
+
+
 @socketio.on("request-current-point", namespace="/current-point-feed")
-def camera_frame_requested(message):
-    point = get_current_point()
-    if point is not None:
-        emit("manipulated-new-frame", {
-            "base64": base64.b64encode(frame).decode("ascii")
-        })
+def current_points(message):
+    while True:
+        point = get_current_point()
+        if point is not None:
+            str_point = str(point)
+            print(str_point)
+            emit("current-point", {
+                "point": str_point
+            })
+        time.sleep(1)
+
+
 
 
 if __name__ == "__main__":
