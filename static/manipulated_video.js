@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const FPS = 62.5 // => ( 62.5; 50; 40; 32; 31.25; 25; 20; 16 )
+    const FPS = 16 // => ( 62.5; 50; 40; 32; 31.25; 25; 20; 16 )
     const TBF = 1000/FPS //=> TBF = Time Between Frames
 
     const socket = io.connect(`ws://${document.domain}:${location.port}/manipulated-camera-feed`);

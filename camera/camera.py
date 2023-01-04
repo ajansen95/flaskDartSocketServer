@@ -8,6 +8,7 @@ from camera import manipulation
 
 class Camera:
     def __init__(self):
+        self.cam_to_board = []
         self.thread = None
         self.current_frame = None
         self.last_access = None
@@ -36,7 +37,9 @@ class Camera:
 
     def get_manipulated_frame(self):
         self.last_access = time.time()
-        manipulated_frame = manipulation.manipulate(self.current_frame)
+        if len(self.cam_to_board) == 0:
+            self.cam_to_board = manipulation.calibrate_dartboard(self.current_frame)
+        manipulated_frame = manipulation.manipulate(self.current_frame, self.cam_to_board)
         ret, encoded_frame = cv2.imencode(".jpg", manipulated_frame)
         if ret:
             return encoded_frame
