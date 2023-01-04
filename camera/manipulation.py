@@ -19,10 +19,10 @@ upper_red2 = np.array([180, 255, 255])
 # mapped dartboard
 centre = (452, 452)
 middle_up = (452, 111)
-angles = [(-9, 9, 20), (9, 27, 5), (27, 45, 12), (45, 63, 9), (63, 81, 14), (81, 99, 11), (99, 117, 8),
+angles = [(351, 9, 20), (9, 27, 5), (27, 45, 12), (45, 63, 9), (63, 81, 14), (81, 99, 11), (99, 117, 8),
           (117, 135, 16),
           (135, 153, 7), (153, 171, 19), (171, 189, 3), (189, 207, 17), (207, 225, 2), (225, 243, 15),
-          (243, 261, 10), (261, -81, 6), (-81, -63, 13), (-63, -45, 4), (-45, -27, 18), (-27, -9, 1)]
+          (243, 261, 10), (261, 279, 6), (279, 297, 13), (297, 315, 4), (315, 333, 18), (333, 351, 1)]
 
 distance = [(0, 15, 50), (16, 31, 25), (32, 194, 1), (194, 215, 3), (216, 325, 1), (326, 340, 2)]
 
@@ -133,18 +133,20 @@ def get_point_value(coord):
     angle1 = math.atan2(line1Y1 - line1Y2, line1X1 - line1X2)
     angle2 = math.atan2(line2Y1 - line2Y2, line2X1 - line2X2)
     angleDegrees = int((angle1 - angle2) * 360 / (2 * math.pi))
+    if angleDegrees < 0:
+        angleDegrees += 360
 
     points = 0
     multiplier = 0
     for d in distance:
         if dst > 340:
             print(str(multiplier) + " * " + str(points))
-            return 0
+            return 0, 0
         if dst <= d[1]:
             multiplier = d[2]
             if d[2] == 25 or d[2] == 50:
                 print(str(multiplier) + " * " + str(points))
-                return multiplier
+                return multiplier, 0
             break
 
     for ang in angles:
@@ -152,9 +154,13 @@ def get_point_value(coord):
             if angleDegrees < ang[1]:
                 points = ang[2]
                 break
+    if angleDegrees > 351:
+        points = 20
+    if angleDegrees < 9:
+        points = 20
 
     print(str(multiplier) + " * " + str(points))
-    return multiplier * points
+    return multiplier, points
 
 
 # test functions
@@ -222,7 +228,8 @@ def manipulate(current_frame, cam_to_board):
             if min(coords) == (0, 0):
                 coords = []
                 return
-            current_point = get_point_value(min(coords))
+            x, y = get_point_value(min(coords))
+            current_point = (x, y)
             point_history.append((min(coords)))
             coords = []
 
