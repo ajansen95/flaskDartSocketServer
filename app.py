@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import base64
 import logging
+from random import randint
 import time
 
 import cv2
@@ -16,7 +17,7 @@ app = Flask(__name__)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 Payload.max_decode_packets = 500
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 camera = Camera()
 camera.start()
@@ -63,12 +64,23 @@ def current_points(message):
     while True:
         point = get_current_point()
         if point is not None:
-            str_point = str(point)
-            print(str_point)
+            multiplier = str(point[0])
+            points = str(point[1])
+            # print(str_point)
             emit("current-point", {
-                "point": str_point
+                "multipier": multiplier,
+                "points": points
             })
-        time.sleep(1)
+        else:
+            multiplier = str(randint(1, 3))
+            points = str(randint(1, 20))
+            string = multiplier + " * " + points
+            print(string)
+            emit("current-point", {
+                "multipier": multiplier,
+                "points": points
+            })
+        time.sleep(3)
 
 
 
